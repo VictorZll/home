@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+<!-- 配置spring-MVC -->		
+<!-- 1开启注解配置 -->		
+<context:annotation-config/>
+<!-- 2扫描基本包 -->
+<context:component-scan base-package="com.newroad"/>
+<!-- 3配置连接池 -->
+<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" >
+	<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/test" ></property>
+	<property name="driverClass" value="com.mysql.jdbc.Driver" ></property>
+	<property name="user" value="root" ></property>
+	<property name="password" value="root" ></property>
+</bean>
+<!-- 4配置sqlSession工厂 -->
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" >
+	<property name="dataSource" ref="dataSource" ></property>
+	<property name="configLocation" value="classpath:mybatis_config.xml" ></property>
+</bean>
+<!-- 5配置mapper扫描器 -->
+<bean id="" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<property name="basePackage" value="com.newroad" ></property>
+	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" ></property>
+</bean>
+<!-- 6开启事务管理 -->
+<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+	<property name="dataSource" ref="dataSource"></property>
+</bean>
+<!-- end -->
+
+<!-- spring-mybatis -->
+<!-- 配置静态资源处理器 -->
+<mvc:default-servlet-handler/>
+<!-- 开启controller注解配置 -->
+<mvc:annotation-driven/>
+<!-- 配置视图转发器 -->
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+	<property name="prefix" value="/" ></property>
+	<property name="suffix" value=".jsp" ></property>
+</bean>
+
+</beans>
